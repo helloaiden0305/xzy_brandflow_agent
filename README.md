@@ -42,11 +42,13 @@ pip install -r requirements.txt
 
 ### 3. 配置环境变量
 
-编辑 `.env` 文件，配置数据库、LLM、图片生成和 JWT 参数：
+复制 `.env.example` 为 `.env`，再配置数据库、LLM、图片生成和 JWT 参数。本项目不会上传本地 `.env`。
 
 ```env
 DATABASE_URL=postgresql+asyncpg://postgres:your_password@localhost:5432/brandflow_db
 POSTGRES_URI=postgresql://postgres:your_password@localhost:5432/brandflow_db
+APP_NAME=XZY BrandFlow Agent
+DEBUG=true
 LLM_API_KEY=your_llm_api_key
 LLM_BASE_URL=https://your-llm-base-url
 LLM_MODEL=your_model
@@ -55,7 +57,13 @@ IMAGE_API_KEY=your_image_api_key
 IMAGE_BASE_URL=https://your-image-base-url
 IMAGE_MODEL=your_image_model
 JWT_SECRET_KEY=change-me
+JWT_ALGORITHM=HS256
+JWT_EXPIRE_MINUTES=1440
 ```
+
+本项目不内置 Mock LLM / Mock Image 数据。完整体验工作流需要配置 PostgreSQL、`LLM_API_KEY` 和 `IMAGE_API_KEY`。
+
+如果只是验证登录、工作流启动、历史任务和状态恢复，需要 PostgreSQL 与 LLM 配置。缺少 `LLM_API_KEY` 时，AI 主题生成、宣传初稿生成、视觉摘要提取可能失败或返回空结果。缺少 `IMAGE_API_KEY` 时，后端基础服务仍可启动，但传播素材生成不可用，实际调用图片生成时会返回清晰错误。
 
 ### 4. 启动后端服务
 

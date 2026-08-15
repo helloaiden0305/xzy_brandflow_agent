@@ -112,3 +112,37 @@
   - .env 当前未配置 LLM_API_KEY / LLM_BASE_URL / LLM_MODEL 等模型参数，/workflow/start 虽返回 200，但 generated_topics 为空，说明 AI 主题生成未真正跑通。
   - .env.example 中仍存在疑似真实密钥，阶段二安全清理必须处理。
   - .gitignore 当前通过 *.log 忽略了 改造2.log，阶段二必须增加 !改造2.log。
+
+## 2026-08-16 01:27:37 CST 阶段二点一：阶段二验收缺口修复
+
+- 所在分支：feature/xzy-brandflow-demo
+- 修改文件：
+  - .env（本地文件，不入 Git）
+  - .env.example
+  - README.md
+  - app/services/__init__.py
+  - app/services/image_service.py
+  - 改造2.log
+  - app/**/__pycache__/（验收后清理）
+  - app/**/*.pyc（验收后清理）
+  - frontend/dist/（验收后清理）
+- 修改目的：
+  - 将本地 .env 中 APP_NAME 修正为 XZY BrandFlow Agent，确保 /health 不再暴露旧项目名。
+  - 补全 .env.example 中 APP_NAME、DEBUG、JWT_ALGORITHM、JWT_EXPIRE_MINUTES 等展示版必要配置。
+  - 在 README 启动章节明确说明本项目不内置 Mock LLM / Mock Image 数据，以及缺少 PostgreSQL、LLM Key、Image Key 时的影响。
+  - 将图片服务从导入期单例初始化改为 get_image_service() 调用期懒加载，避免缺少 IMAGE_API_KEY 时阻断后端基础启动。
+  - 清理阶段二点一验收产生的前端构建产物和 Python 缓存。
+- 验证方式：
+  - git status 显示当前分支为 feature/xzy-brandflow-demo。
+  - git check-ignore 验证 .env、frontend/dist、__pycache__、static/images/generated 会被忽略；改造2.log 不被忽略。
+  - git ls-files 检查未包含 .env、node_modules、frontend/dist、__pycache__、*.pyc、logs、static/images/generated。
+  - 搜索阶段二安全风险词、旧项目命名和旧业务词，已跟踪源码与展示文件无命中。
+  - 使用 conda project1 环境执行 test_db_connection.py，数据库连接成功。
+  - 启动 uvicorn app.main:app，后端启动成功；GET /health 返回 {"status":"healthy","service":"XZY BrandFlow Agent"}。
+  - 设置 IMAGE_API_KEY 为空后导入 app.main，应用可正常导入，证明缺少图片 Key 不再阻断基础启动。
+  - 在 frontend 目录执行 npm install，依赖安装成功。
+  - 在 frontend 目录执行 npm run build，Vite 构建成功。
+- 遗留问题：
+  - npm install 提示当前前端依赖存在 8 个审计漏洞（2 moderate，6 high），本阶段未做依赖升级，建议后续单独评估。
+  - 本地 .env 和数据库连接仍使用个人本机配置，不进入 Git；GitHub 使用者需要复制 .env.example 自行填写。
+  - 当前未配置远程仓库，尚未执行 remote 配置或 push。

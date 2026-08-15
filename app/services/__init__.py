@@ -2,7 +2,8 @@
 服务模块 - 提供 LLM 和图片生成服务
 """
 from app.services.llm_service import llm_service, LLMUsageInfo, TopicsResponse, StreamResult
-from app.services.image_service import image_service
+
+_image_service = None
 
 
 def get_llm_service():
@@ -11,5 +12,10 @@ def get_llm_service():
 
 
 def get_image_service():
-    """获取图片服务实例"""
-    return image_service
+    """懒加载图片服务实例，避免缺少图片 Key 时阻断基础服务启动"""
+    global _image_service
+    if _image_service is None:
+        from app.services.image_service import ImageService
+
+        _image_service = ImageService()
+    return _image_service

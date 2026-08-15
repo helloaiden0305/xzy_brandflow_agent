@@ -155,7 +155,3 @@ class ImageService:
         image_paths = [path for path in results if path is not None]
         print(f"[ImageService] 成功生成 {len(image_paths)}/{len(visual_points)} 张图片")
         return image_paths
-
-
-# 单例实例
-image_service = ImageService()
