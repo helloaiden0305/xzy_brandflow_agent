@@ -2,6 +2,8 @@
 
 企业宣传工作流平台，基于 FastAPI、Vue、LangGraph 和 PostgreSQL 构建，用于企业宣传内容生成、人工审核、状态持久化与历史任务恢复。
 
+面向企业内部品牌、HR、运营、行政和管理团队，XZY BrandFlow Agent 将宣传内容生产拆成可追踪、可中断、可恢复的工作流：输入宣传方向，AI 生成候选宣传主题，人工选择主题，AI 生成宣传初稿，人工审核后驳回重写或通过归档，并在通过后生成传播素材。
+
 ## 功能特性
 
 - **AI 主题策划**: 根据宣传方向生成候选宣传主题
@@ -42,7 +44,7 @@ pip install -r requirements.txt
 
 ### 3. 配置环境变量
 
-复制 `.env.example` 为 `.env`，再配置数据库、LLM、图片生成和 JWT 参数。本项目不会上传本地 `.env`。
+复制 `.env.example` 为 `.env`，再配置数据库、LLM、传播素材生成和 JWT 参数。本项目不会上传本地 `.env`。
 
 ```env
 DATABASE_URL=postgresql+asyncpg://postgres:your_password@localhost:5432/brandflow_db
@@ -63,7 +65,7 @@ JWT_EXPIRE_MINUTES=1440
 
 本项目不内置 Mock LLM / Mock Image 数据。完整体验工作流需要配置 PostgreSQL、`LLM_API_KEY` 和 `IMAGE_API_KEY`。
 
-如果只是验证登录、工作流启动、历史任务和状态恢复，需要 PostgreSQL 与 LLM 配置。缺少 `LLM_API_KEY` 时，AI 主题生成、宣传初稿生成、视觉摘要提取可能失败或返回空结果。缺少 `IMAGE_API_KEY` 时，后端基础服务仍可启动，但传播素材生成不可用，实际调用图片生成时会返回清晰错误。
+如果只是验证登录、宣传任务启动、历史任务和状态恢复，需要 PostgreSQL 与 LLM 配置。缺少 `LLM_API_KEY` 时，AI 主题生成、宣传初稿生成、视觉摘要提取可能失败或返回空结果。缺少 `IMAGE_API_KEY` 时，后端基础服务仍可启动，但传播素材生成不可用，实际调用传播素材生成时会返回清晰错误。
 
 ### 4. 启动后端服务
 
@@ -174,11 +176,11 @@ human_review         人工审核
 
 ```text
 app/
-├── api/v1/              # 鉴权、工作流、图片接口
+├── api/v1/              # 鉴权、宣传任务、传播素材接口
 ├── core/                # 配置、数据库、日志和中间件
 ├── graph/               # LangGraph 状态、节点、子图和工作流组装
 ├── models/              # 数据模型
-├── services/            # LLM 与图片生成服务
+├── services/            # LLM 与传播素材生成服务
 └── main.py              # FastAPI 入口
 
 frontend/
@@ -192,6 +194,8 @@ frontend/
 1. 本地 `.env` 用于开发运行，不应提交到公开仓库。
 2. LangGraph Checkpointer 会自动创建所需表结构。
 3. 生成的传播素材默认保存在 `static/images/generated/`。
+4. 当前项目是 GitHub Demo 原型，不内置 Mock LLM / Mock Image，也不伪造外部服务结果。
+5. 底层字段名如 `topic_direction`、`generated_topics`、`article_content` 会保持接口兼容，对外说明统一解释为宣传方向、候选宣传主题和宣传初稿。
 
 ## License
 

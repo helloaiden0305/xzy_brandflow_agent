@@ -146,3 +146,65 @@
   - npm install 提示当前前端依赖存在 8 个审计漏洞（2 moderate，6 high），本阶段未做依赖升级，建议后续单独评估。
   - 本地 .env 和数据库连接仍使用个人本机配置，不进入 Git；GitHub 使用者需要复制 .env.example 自行填写。
   - 当前未配置远程仓库，尚未执行 remote 配置或 push。
+
+## 2026-08-16 01:33:14 CST 阶段二点一复验记录
+
+- 所在分支：feature/xzy-brandflow-demo
+- 修改文件：
+  - 改造2.log
+  - app/**/__pycache__/（复验产生后已清理）
+  - app/**/*.pyc（复验产生后已清理）
+  - frontend/dist/（复验产生后已清理）
+- 修改目的：
+  - 复查阶段二点一是否满足本地运行优先、GitHub 不露馅和启动配置修复要求。
+- 验证方式：
+  - git status 显示当前分支为 feature/xzy-brandflow-demo。
+  - git log 显示最新提交为 fix: complete brandflow startup and config cleanup。
+  - 检查 .env.example，APP_NAME、DEBUG、JWT_ALGORITHM、JWT_EXPIRE_MINUTES 已补全，密钥均为占位符。
+  - 检查本地 .env，APP_NAME 已为 XZY BrandFlow Agent。
+  - README 已说明本项目不内置 Mock LLM / Mock Image 数据，并说明缺少 LLM_API_KEY / IMAGE_API_KEY 的影响。
+  - 使用 conda project1 环境执行 test_db_connection.py，数据库连接成功。
+  - 执行 npm run build，前端构建成功。
+  - 启动 uvicorn app.main:app 后，GET /health 返回 {"status":"healthy","service":"XZY BrandFlow Agent"}。
+  - 注册、登录、/workflow/threads 基础接口验证通过。
+  - 验收后清理 Python 缓存和 frontend/dist，复查无残留。
+  - git ls-files 检查未跟踪 .env、node_modules、frontend/dist、__pycache__、*.pyc、logs、static/images/generated、本地数据库文件。
+- 验收结论：
+  - 阶段二点一本地基础启动、配置说明、安全清理和 GitHub 展示防露馅目标通过。
+- 遗留问题：
+  - 本次复验追加了改造2.log，需要后续提交。
+  - npm install 曾提示前端依赖存在审计漏洞，本阶段未处理，建议后续单独评估。
+
+## 2026-08-16 01:44:41 CST 阶段三：业务语义统一收口
+
+- 所在分支：feature/xzy-brandflow-demo
+- 修改文件：
+  - README.md
+  - app/api/v1/image.py
+  - app/api/v1/workflow.py
+  - app/core/logger.py
+  - app/graph/nodes/visualizer.py
+  - app/main.py
+  - app/services/__init__.py
+  - app/services/image_service.py
+  - app/services/llm_service.py
+  - frontend/src/api.js
+  - frontend/src/style.css
+  - 改造2.log
+  - frontend/dist/（验收后清理）
+- 修改目的：
+  - 将 README、API 文档、日志注释、前端 API 注释、传播素材服务输出统一到企业宣传语义。
+  - 将面向文档和错误提示的“线程”统一解释为历史任务 ID / 历史任务列表。
+  - 将“图片生成/图片接口/视觉要点”等泛称统一为传播素材生成 / 传播素材接口 / 视觉摘要。
+  - 补充 README 项目定位、核心流程和项目边界说明，明确底层字段名保留兼容但对外按宣传语义解释。
+  - 不修改 LangGraph 节点拓扑、interrupt / resume 机制、Checkpointer 表结构或底层状态字段契约。
+- 验证方式：
+  - 搜索旧业务词与旧项目命名，无命中。
+  - 搜索阶段三关注的旧泛称，包括线程、工作流线程、图片接口、图片模型、图片生成、视觉要点、草稿审核、无权访问此工作流等，已处理为宣传任务、历史任务、传播素材、视觉摘要等语义。
+  - 使用 Python AST 解析 app 目录和 test_db_connection.py，共 34 个 Python 文件，语法检查通过。
+  - 在 frontend 目录执行 npm run build，Vite 构建成功。
+  - 验收后清理 frontend/dist，避免构建产物进入 Git。
+- 遗留问题：
+  - 底层字段名 topic_direction、generated_topics、selected_topic、article_content、visual_points、image_urls 继续保留，以维持前后端 API、LangGraph State 和历史 checkpoint 兼容。
+  - 当前未配置远程仓库，尚未执行 remote 配置或 push。
+  - npm install 曾提示前端依赖存在审计漏洞，本阶段未处理，建议后续单独评估。

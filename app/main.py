@@ -138,7 +138,7 @@ app.include_router(auth_router, prefix="/api/v1")
 app.include_router(workflow_router, prefix="/api/v1")
 app.include_router(image_router, prefix="/api/v1")
 
-# 挂载静态文件目录（用于访问生成的图片）
+# 挂载静态文件目录（用于访问生成的传播素材）
 static_dir = Path(__file__).parent.parent / "static"
 static_dir.mkdir(parents=True, exist_ok=True)
 app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")

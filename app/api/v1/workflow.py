@@ -51,7 +51,7 @@ class StartWorkflowRequest(BaseModel):
 
 class StartWorkflowResponse(BaseModel):
     """启动工作流响应"""
-    thread_id: str = Field(..., description="工作流线程ID")
+    thread_id: str = Field(..., description="历史任务 ID")
     status: str = Field(..., description="当前状态")
     generated_topics: List[str] = Field(default=[], description="生成的宣传主题标题列表")
     message: str = Field(..., description="提示信息")
@@ -61,7 +61,7 @@ class StartWorkflowResponse(BaseModel):
 
 class WorkflowStateResponse(BaseModel):
     """工作流状态响应"""
-    thread_id: str = Field(..., description="工作流线程ID")
+    thread_id: str = Field(..., description="历史任务 ID")
     status: str = Field(..., description="当前状态")
     values: Dict[str, Any] = Field(default={}, description="当前状态值")
     next_nodes: List[str] = Field(default=[], description="下一个待执行节点")
@@ -84,7 +84,7 @@ class ResumeWorkflowRequest(BaseModel):
 
 class ResumeWorkflowResponse(BaseModel):
     """恢复工作流响应"""
-    thread_id: str = Field(..., description="工作流线程ID")
+    thread_id: str = Field(..., description="历史任务 ID")
     status: str = Field(..., description="当前状态")
     message: str = Field(..., description="提示信息")
     next_nodes: List[str] = Field(default=[], description="下一个待执行节点")
@@ -95,8 +95,8 @@ class ResumeWorkflowResponse(BaseModel):
 
 
 class ThreadInfo(BaseModel):
-    """线程信息"""
-    thread_id: str = Field(..., description="线程ID")
+    """历史任务信息"""
+    thread_id: str = Field(..., description="历史任务 ID")
     topic_direction: str = Field(default="", description="宣传方向")
     selected_topic: str = Field(default="", description="选中的宣传主题")
     status: str = Field(default="", description="当前状态")
@@ -105,8 +105,8 @@ class ThreadInfo(BaseModel):
 
 
 class ThreadListResponse(BaseModel):
-    """线程列表响应"""
-    threads: List[ThreadInfo] = Field(default=[], description="线程列表")
+    """历史任务列表响应"""
+    threads: List[ThreadInfo] = Field(default=[], description="历史任务列表")
     total: int = Field(default=0, description="总数")
 
 
@@ -150,10 +150,10 @@ async def start_workflow(
         包含 thread_id 和生成的宣传主题列表
     """
     try:
-        # 生成唯一的线程 ID（包含用户ID前缀用于隔离）
+        # 生成唯一的历史任务 ID（包含用户ID前缀用于隔离）
         thread_id = f"{current_user.id}_{uuid.uuid4()}"
         
-        # 记录工作流启动
+        # 记录宣传任务启动
         app_logger.workflow_started(
             thread_id=thread_id,
             topic_direction=request.topic_direction
@@ -209,7 +209,7 @@ async def start_workflow(
         )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"启动工作流失败: {str(e)}"
+            detail=f"启动宣传任务失败: {str(e)}"
         )
 
 
@@ -219,10 +219,10 @@ async def get_workflow_state(
     current_user: User = Depends(get_current_user)
 ) -> WorkflowStateResponse:
     """
-    获取工作流当前状态
+    获取宣传任务当前状态
     
     Args:
-        thread_id: 工作流线程ID
+        thread_id: 历史任务 ID
         
     Returns:
         当前工作流状态快照
@@ -232,7 +232,7 @@ async def get_workflow_state(
         if not thread_id.startswith(str(current_user.id)):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="无权访问此工作流"
+                detail="无权访问此宣传任务"
             )
         
         # 获取编译后的图
@@ -277,7 +277,7 @@ async def get_workflow_state(
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"获取工作流状态失败: {str(e)}"
+            detail=f"获取宣传任务状态失败: {str(e)}"
         )
 
 
@@ -293,7 +293,7 @@ async def resume_workflow(
     使用 Command 对象向中断的工作流提供用户输入并恢复执行
     
     Args:
-        thread_id: 工作流线程ID
+        thread_id: 历史任务 ID
         request: 包含操作类型和数据的请求体
         
     Returns:
@@ -304,7 +304,7 @@ async def resume_workflow(
         if not thread_id.startswith(str(current_user.id)):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="无权访问此工作流"
+                detail="无权访问此宣传任务"
             )
         
         # 获取编译后的图
@@ -386,19 +386,19 @@ async def resume_workflow(
         final_result = None
         
         if is_completed:
-            message = "工作流已完成"
+            message = "宣传任务已完成"
             final_result = {
                 "article_content": updated_state.values.get("article_content", ""),
                 "visual_points": updated_state.values.get("visual_points", []),
                 "image_urls": updated_state.values.get("image_urls", []),
             }
-            # 记录工作流完成
+            # 记录宣传任务完成
             app_logger.workflow_completed(thread_id=thread_id)
         elif interrupt_info:
             action_required = interrupt_info.get("action_required", "")
             if action_required == "review":
                 message = "宣传初稿已生成，请审核"
-                # 记录草稿生成
+                # 记录宣传初稿生成
                 article_content = updated_state.values.get("article_content", "")
                 app_logger.draft_generated(
                     thread_id=thread_id,
@@ -430,7 +430,7 @@ async def resume_workflow(
         )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"恢复工作流失败: {str(e)}"
+            detail=f"恢复宣传任务失败: {str(e)}"
         )
 
 
@@ -440,10 +440,10 @@ async def get_workflow_history(
     current_user: User = Depends(get_current_user)
 ) -> Dict[str, Any]:
     """
-    获取工作流的历史状态记录
+    获取宣传任务的历史状态记录
     
     Args:
-        thread_id: 工作流线程ID
+        thread_id: 历史任务 ID
         
     Returns:
         历史状态列表
@@ -453,7 +453,7 @@ async def get_workflow_history(
         if not thread_id.startswith(str(current_user.id)):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="无权访问此工作流"
+                detail="无权访问此宣传任务"
             )
         
         # 获取编译后的图
@@ -481,7 +481,7 @@ async def get_workflow_history(
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"获取工作流历史失败: {str(e)}"
+            detail=f"获取宣传任务历史失败: {str(e)}"
         )
 
 
@@ -490,10 +490,10 @@ async def get_all_threads(
     current_user: User = Depends(get_current_user)
 ) -> ThreadListResponse:
     """
-    获取所有工作流线程列表
+    获取所有历史宣传任务列表
     
     Returns:
-        线程列表，包含每个线程的基本信息
+        历史任务列表，包含每个宣传任务的基本信息
     """
     try:
         threads = []
@@ -551,7 +551,7 @@ async def get_all_threads(
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"获取线程列表失败: {str(e)}"
+            detail=f"获取历史任务列表失败: {str(e)}"
         )
 
 
@@ -561,10 +561,10 @@ async def delete_thread(
     current_user: User = Depends(get_current_user)
 ) -> Dict[str, Any]:
     """
-    删除指定的工作流线程
+    删除指定的历史宣传任务
     
     Args:
-        thread_id: 工作流线程ID
+        thread_id: 历史任务 ID
         
     Returns:
         删除结果
@@ -574,7 +574,7 @@ async def delete_thread(
         if not thread_id.startswith(str(current_user.id)):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="无权删除此工作流"
+                detail="无权删除此宣传任务"
             )
         
         # 从 PostgreSQL 数据库删除
@@ -597,14 +597,14 @@ async def delete_thread(
                     (thread_id,)
                 )
                 
-                return {"success": True, "message": f"线程 {thread_id} 已删除"}
+                return {"success": True, "message": f"历史任务 {thread_id} 已删除"}
         
     except HTTPException:
         raise
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"删除线程失败: {str(e)}"
+            detail=f"删除历史任务失败: {str(e)}"
         )
 
 
@@ -768,14 +768,14 @@ async def stream_resume_workflow(
     - llm_start: LLM 开始生成
     - llm_token: LLM 输出的每个 token（宣传初稿逐字输出）
     - llm_end: LLM 生成完成，包含 token 统计
-    - done: 工作流阶段完成
+    - done: 宣传任务阶段完成
     - error: 错误信息
     """
     # 验证 thread_id 属于当前用户
     if not thread_id.startswith(str(current_user.id)):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="无权访问此工作流"
+            detail="无权访问此宣传任务"
         )
     
     async def generate():

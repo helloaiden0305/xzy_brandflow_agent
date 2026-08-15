@@ -1,5 +1,5 @@
 """
-图片生成测试接口
+传播素材生成测试接口
 使用 Gemini 3 Pro Image Preview 生成企业宣传传播素材
 """
 from typing import Optional
@@ -8,27 +8,27 @@ from pydantic import BaseModel, Field
 
 from app.services import get_image_service
 
-router = APIRouter(prefix="/image", tags=["Image"])
+router = APIRouter(prefix="/image", tags=["Brand Assets"])
 
 
 class GenerateImageRequest(BaseModel):
-    prompt: str = Field(..., description="图片描述文案")
+    prompt: str = Field(..., description="传播素材描述文案")
     optimize_for_brand: bool = Field(True, description="是否优化为企业宣传传播风格")
 
 
 class GenerateImageResponse(BaseModel):
-    url: Optional[str] = Field(None, description="生成的图片访问路径")
-    model: str = Field(..., description="使用的图片模型")
+    url: Optional[str] = Field(None, description="生成的传播素材访问路径")
+    model: str = Field(..., description="使用的传播素材生成模型")
     success: bool = Field(..., description="是否生成成功")
 
 
 @router.post("/generate", response_model=GenerateImageResponse)
 async def generate_image(req: GenerateImageRequest) -> GenerateImageResponse:
     """
-    生成单张图片（用于连通性测试）
+    生成单张传播素材（用于连通性测试）
     
     - 默认会自动优化提示词，生成企业宣传传播素材
-    - 图片比例固定为 3:4 竖版（适合移动端浏览）
+    - 素材比例固定为 3:4 竖版（适合移动端浏览）
     """
     try:
         image_service = get_image_service()
@@ -49,5 +49,5 @@ async def generate_image(req: GenerateImageRequest) -> GenerateImageResponse:
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"图片生成失败: {str(e)}",
+            detail=f"传播素材生成失败: {str(e)}",
         ) from e

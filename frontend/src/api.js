@@ -124,13 +124,13 @@ export async function getWorkflowHistory(threadId) {
   return res.data
 }
 
-// 获取所有宣传任务线程列表
+// 获取所有历史宣传任务列表
 export async function getAllThreads() {
   const res = await api.get('/workflow/threads')
   return res.data
 }
 
-// 删除宣传任务线程
+// 删除历史宣传任务
 export async function deleteThread(threadId) {
   const res = await api.delete(`/workflow/threads/${threadId}`)
   return res.data
@@ -189,7 +189,7 @@ export async function streamStartWorkflow(topicDirection, callbacks, streamMode 
 
 /**
  * 流式审核通过 - 使用非流式 API，包装成回调形式
- * @param {string} threadId - 线程ID
+ * @param {string} threadId - 历史任务 ID
  * @param {Object} callbacks - 回调函数对象
  * @param {string} streamMode - 流模式（此场景下忽略，使用普通 API）
  */
@@ -204,7 +204,7 @@ export async function streamApproveArticle(threadId, callbacks, streamMode = 'up
     })
     const data = res.data
     
-    // 更新事件 - 视觉要点
+    // 更新事件 - 视觉摘要
     if (data.result?.visual_points) {
       callbacks.onUpdate?.('extract_visuals', {
         visual_points: data.result.visual_points,
@@ -212,7 +212,7 @@ export async function streamApproveArticle(threadId, callbacks, streamMode = 'up
       })
     }
     
-    // 更新事件 - 图片
+    // 更新事件 - 传播素材
     if (data.result?.image_urls) {
       callbacks.onUpdate?.('generate_images', {
         image_urls: data.result.image_urls,
@@ -305,7 +305,7 @@ async function handleSSEStream(response, callbacks) {
 
 /**
  * 流式选择宣传主题 - 选定主题后流式生成宣传初稿
- * @param {string} threadId - 线程ID
+ * @param {string} threadId - 历史任务 ID
  * @param {string} selectedTopic - 选中的宣传主题
  * @param {Object} callbacks - 回调函数对象
  */
@@ -326,7 +326,7 @@ export function streamSelectTopic(threadId, selectedTopic, callbacks) {
 
 /**
  * 流式驳回重写 - 驳回后流式重新生成宣传初稿
- * @param {string} threadId - 线程ID
+ * @param {string} threadId - 历史任务 ID
  * @param {string} feedback - 修改意见
  * @param {Object} callbacks - 回调函数对象
  */

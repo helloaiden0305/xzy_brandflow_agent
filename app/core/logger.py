@@ -297,7 +297,7 @@ class AppLogger:
             **kwargs
         )
     
-    # ---------- 工作流事件 ----------
+    # ---------- 宣传任务事件 ----------
     
     def workflow_started(
         self,
@@ -305,7 +305,7 @@ class AppLogger:
         topic_direction: str,
         **kwargs: Any
     ) -> None:
-        """工作流启动"""
+        """宣传任务启动"""
         self._logger.info(
             "workflow_started",
             thread_id=thread_id,
@@ -319,7 +319,7 @@ class AppLogger:
         stage: str,
         **kwargs: Any
     ) -> None:
-        """工作流阶段变化"""
+        """宣传任务阶段变化"""
         self._logger.info(
             "workflow_stage_changed",
             thread_id=thread_id,
@@ -347,7 +347,7 @@ class AppLogger:
         word_count: int = 0,
         **kwargs: Any
     ) -> None:
-        """草稿生成完成"""
+        """宣传初稿生成完成"""
         self._logger.info(
             "draft_generated",
             thread_id=thread_id,
@@ -356,7 +356,7 @@ class AppLogger:
         )
     
     def draft_approved(self, thread_id: str, **kwargs: Any) -> None:
-        """草稿审核通过"""
+        """宣传初稿审核通过"""
         self._logger.info(
             "draft_approved",
             thread_id=thread_id,
@@ -370,7 +370,7 @@ class AppLogger:
         revision_count: int = 0,
         **kwargs: Any
     ) -> None:
-        """草稿被驳回"""
+        """宣传初稿被驳回"""
         self._logger.info(
             "draft_rejected",
             thread_id=thread_id,
@@ -385,7 +385,7 @@ class AppLogger:
         duration_ms: float = 0,
         **kwargs: Any
     ) -> None:
-        """工作流完成"""
+        """宣传任务完成"""
         self._logger.info(
             "workflow_completed",
             thread_id=thread_id,
@@ -400,7 +400,7 @@ class AppLogger:
         stage: str = "",
         **kwargs: Any
     ) -> None:
-        """工作流错误"""
+        """宣传任务错误"""
         self._logger.error(
             "workflow_error",
             thread_id=thread_id,

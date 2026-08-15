@@ -322,7 +322,7 @@ body {
   min-height: 60px;
 }
 
-/* 图片展示 */
+/* 传播素材展示 */
 .image-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -625,7 +625,7 @@ body {
   background: #e8e8e8;
 }
 
-/* 线程列表 */
+/* 历史任务列表 */
 .thread-list {
   flex: 1;
   overflow-y: auto;
@@ -1071,7 +1071,7 @@ body {
   font-size: 14px;
 }
 
-/* ========== 当前工作流信息 ========== */
+/* ========== 当前宣传任务信息 ========== */
 .current-workflow-info {
   background: linear-gradient(135deg, #e6f4ff 0%, #f0f5ff 100%);
   border: 1px solid #91caff;

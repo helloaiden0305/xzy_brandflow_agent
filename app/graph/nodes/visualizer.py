@@ -66,7 +66,7 @@ async def generate_images_node(state: AgentState) -> Dict[str, Any]:
     """
     生成传播素材节点
     
-    根据视觉摘要生成传播素材（部分失败时仍会返回成功的图片）
+    根据视觉摘要生成传播素材（部分失败时仍会返回成功的素材）
     
     Args:
         state: 当前工作流状态
@@ -86,11 +86,11 @@ async def generate_images_node(state: AgentState) -> Dict[str, Any]:
     
     with MetricsContext("generate_images") as tracker:
         try:
-            # 获取图片服务
+            # 获取传播素材服务
             image_service = get_image_service()
             image_urls = await image_service.generate_images(visual_points)
             
-            # 即使部分图片生成失败，也标记为完成
+            # 即使部分传播素材生成失败，也标记为完成
             if len(image_urls) < len(visual_points):
                 error_msg = f"部分传播素材生成失败 ({len(image_urls)}/{len(visual_points)} 成功)"
             else:

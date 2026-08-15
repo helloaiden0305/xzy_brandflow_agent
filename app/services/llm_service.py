@@ -86,7 +86,7 @@ class LLMService:
 
 直接输出 Markdown 格式宣传初稿。"""
 
-    VISUAL_SYSTEM_PROMPT = """为AI图片生成工具提取3个传播素材描述。
+    VISUAL_SYSTEM_PROMPT = """为AI传播素材生成工具提取3个传播素材描述。
 
 格式要求：
 - 纯视觉描述，含场景、色彩、风格
