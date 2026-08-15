@@ -1,0 +1,114 @@
+## 2026-08-16 00:30:50 CST 阶段一：UI 展示文字与方法命名清洗
+
+- 所在分支：未初始化 Git / no-git
+- 修改文件：
+  - frontend/index.html
+  - frontend/src/App.vue
+  - frontend/src/api.js
+  - frontend/src/style.css
+  - frontend/package.json
+  - frontend/package-lock.json
+  - app/main.py
+  - app/core/config.py
+  - app/core/logger.py
+  - test_db_connection.py
+  - app/api/v1/workflow.py
+  - app/api/v1/image.py
+  - app/graph/state.py
+  - app/graph/workflow.py
+  - app/graph/subgraphs/topic_selection.py
+  - app/graph/nodes/planner.py
+  - app/graph/nodes/writer.py
+  - app/graph/nodes/visualizer.py
+  - app/services/llm_service.py
+  - app/services/image_service.py
+  - scripts/init_db.sql
+  - README.md
+  - frontend/dist/index.html（删除过期构建产物）
+  - frontend/dist/assets/index-B7JuBZW7.js（删除过期构建产物）
+  - frontend/dist/assets/index-gY47YHjw.css（删除过期构建产物）
+- 修改目的：
+  - 将项目展示名统一为 XZY BrandFlow Agent。
+  - 将中文定位统一为企业宣传工作流平台。
+  - 将前端用户可见文案清洗为宣传方向、宣传主题、宣传初稿、传播素材、历史任务等业务语义。
+  - 将 FastAPI 描述、接口字段说明、README、初始化脚本和包名同步为企业宣传语义。
+  - 将 LLM Prompt 从旧内容平台写法改为企业宣传、内部公告、品牌传播、招聘宣传、技术成果宣传、活动复盘等场景。
+  - 将图片生成 Prompt 从旧平台风格改为企业品牌传播素材风格。
+  - 清理明显旧业务注释、提示和错误信息，避免 GitHub Demo 暴露 PRD 指定的旧业务痕迹。
+  - 删除 frontend/dist 下旧构建产物，避免旧 UI 文案残留污染阶段一验收。
+- 验证方式：
+  - 全项目搜索 PRD 指定旧风险词与旧项目命名，结果无命中。
+  - 使用 Python AST 解析 app 目录下 33 个 Python 文件，结果通过。
+  - 搜索新语义 `XZY BrandFlow Agent|企业宣传|宣传主题|宣传初稿|传播素材`，确认前端、README、Prompt 和服务描述已覆盖。
+  - 尝试执行 `npm run build`，未通过，原因是当前 frontend 未安装依赖，`vite` 命令不存在。
+  - 检查 frontend/dist 文件，旧构建产物已删除，当前无残留文件。
+- 遗留问题：
+  - 项目尚未初始化 Git，阶段一日志中的分支记录为 no-git；Git 基线应在阶段二处理。
+  - `topic_direction`、`generated_topics`、`selected_topic`、`article_content`、`visual_points`、`image_urls` 等状态字段暂未重命名，因为它们是前后端 API、LangGraph 状态和历史 thread 恢复契约的一部分，贸然改名可能破坏已有流程。后续如需彻底语义化，可在单独阶段增加兼容层后迁移。
+  - 图片测试接口请求字段已改为 `optimize_for_brand`；如有外部脚本调用旧字段，需要同步更新。
+  - 前端依赖未安装，暂无法重新生成 frontend/dist；安装依赖后需执行 `npm run build` 生成新的展示产物。
+
+## 2026-08-16 00:34:00 CST Git 初始化记录
+
+- 所在分支：main
+- 修改文件：.git/（初始化 Git 仓库元数据）、改造2.log
+- 修改目的：根据用户要求，将项目目录初始化为 Git 仓库，建立后续阶段改造的版本管理基础。
+- 验证方式：执行 git status，结果显示当前为 main 分支，状态为 No commits yet。
+- 遗留问题：尚未创建阶段二 PRD 建议的 feature/xzy-brandflow-demo 分支；尚未调整 .gitignore，因此 改造2.log 当前可能仍被既有日志忽略规则排除，需要在阶段二处理。
+
+## 2026-08-16 01:07:50 CST 阶段二：Git 基线与安全清理
+
+- 所在分支：feature/xzy-brandflow-demo
+- 修改文件：
+  - .gitignore
+  - .env.example
+  - 改造2.log
+  - app/core/logger.py
+  - app/**/__pycache__/（清理）
+  - app/**/*.pyc（清理）
+  - frontend/dist/（清理）
+- 修改目的：
+  - 按 PRD 创建并切换到 feature/xzy-brandflow-demo 分支。
+  - 修正 .gitignore，确保 .env、*.env、logs/、__pycache__/、*.pyc、frontend/dist/、node_modules/、static/images/generated/、本地数据库文件不会进入 Git。
+  - 增加 !改造2.log，确保硬性要求的改造日志可被 Git 跟踪。
+  - 重写 .env.example，仅保留占位符，移除真实密钥、旧数据库名和旧项目命名。
+  - 清理日志模块中的旧服务默认名。
+  - 清理数据库连接测试脚本中的硬编码本地密码和旧数据库名，改为读取 POSTGRES_URI。
+  - 清理 Python 缓存与旧前端构建产物。
+  - 建立初始 Git 安全基线提交，提交信息：chore: establish brandflow git baseline。
+- 验证方式：
+  - git status 显示当前分支为 feature/xzy-brandflow-demo。
+  - git check-ignore 验证 .env 被忽略，改造2.log 不再被忽略，frontend/dist、__pycache__、static/images/generated 均会被忽略。
+  - 检查暂存区文件列表，未包含 .env、node_modules、frontend/dist、__pycache__、*.pyc、logs/、static/images/generated。
+  - 搜索 .env.example 与项目源码，未发现阶段二清理前的真实密钥、旧数据库名或旧项目命名；仅保留 your_password、your_llm_api_key、your_image_api_key 等占位符。
+  - find 检查项目目录，未发现 __pycache__、*.pyc 或 frontend/dist 残留。
+- 遗留问题：
+  - 当前没有配置远程仓库，尚未执行 remote 配置或 push。
+  - 前端依赖仍未安装，因此未重新生成 frontend/dist。
+  - 项目目录已从 PRD 原始路径变为 /Users/johnxu/Documents/project2学习/xzy-brandflow-agent，本阶段按实际存在目录执行。
+
+## 2026-08-16 01:00:35 CST 阶段一验收复查
+
+- 所在分支：main
+- 修改文件：
+  - frontend/node_modules/（执行 npm install 生成，本地依赖目录，后续不上传）
+  - frontend/dist/（执行 npm run build 生成，本地构建产物，后续不上传）
+  - 改造2.log
+- 修改目的：
+  - 验证阶段一 UI 与业务语义清洗后，项目是否仍能安装、构建、启动和访问核心接口。
+- 验证方式：
+  - 使用 conda project1 环境执行 test_db_connection.py，PostgreSQL 连接成功，当前连接库为本地开发库。
+  - 使用 conda project1 环境对关键 Python 文件执行 py_compile，语法检查通过。
+  - 在 frontend 目录执行 npm install，前端依赖安装成功。
+  - 在 frontend 目录执行 npm run build，Vite 构建成功。
+  - 临时设置 IMAGE_API_KEY=dummy 启动后端，验证 /health、注册、登录、/auth/me、/workflow/threads、/workflow/start 接口均返回 200。
+- 验收结论：
+  - 登录 / JWT / 用户隔离 / 历史任务空列表等基础接口链路可用。
+  - 前端构建可用。
+  - 数据库连接可用。
+- 遗留问题：
+  - 正常启动仍会因 .env 未配置 IMAGE_API_KEY 失败，原因是 image_service 在模块导入时立即初始化并强制要求图片 key。建议后续改为懒加载，或在 .env.example / README 中明确必填。
+  - .env 当前 APP_NAME 仍为旧名称，导致 /health 返回旧服务名；需要后续同步为 XZY BrandFlow Agent。
+  - .env 当前未配置 LLM_API_KEY / LLM_BASE_URL / LLM_MODEL 等模型参数，/workflow/start 虽返回 200，但 generated_topics 为空，说明 AI 主题生成未真正跑通。
+  - .env.example 中仍存在疑似真实密钥，阶段二安全清理必须处理。
+  - .gitignore 当前通过 *.log 忽略了 改造2.log，阶段二必须增加 !改造2.log。
