@@ -124,6 +124,7 @@
             <div>
               <h1>XZY BrandFlow Agent</h1>
               <p>企业宣传内容生成与审核工作流</p>
+              <p class="header-subtitle">覆盖外部公众号、内部宣发平台、内部招聘平台、官网公示等场景</p>
             </div>
             <div class="user-info">
               <span class="username">{{ currentUsername }}</span>

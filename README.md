@@ -1,12 +1,12 @@
 # XZY BrandFlow Agent
 
-企业宣传工作流平台，基于 FastAPI、Vue、LangGraph 和 PostgreSQL 构建，用于企业宣传内容生成、人工审核、状态持久化与历史任务恢复。
+企业宣传工作流平台，基于 FastAPI、Vue、LangGraph 和 PostgreSQL 构建，用于企业宣传内容生成、人工审核、状态持久化与历史任务恢复，适用于外部公众号、内部宣发平台、内部招聘平台、官网公示等企业宣传场景。
 
-面向企业内部品牌、HR、运营、行政和管理团队，XZY BrandFlow Agent 将宣传内容生产拆成可追踪、可中断、可恢复的工作流：输入宣传方向，AI 生成候选宣传主题，人工选择主题，AI 生成宣传初稿，人工审核后驳回重写或通过归档，并在通过后生成传播素材。
+面向企业内部品牌、HR、运营、行政和管理团队，XZY BrandFlow Agent 将宣传方向、AI 初稿、人工审核、驳回重写、传播素材生成串成一条可追踪的工作流，支持活动复盘、技术成果宣传、组织文化宣传和招聘宣传等常见内容流转场景。
 
 ## 功能特性
 
-- **AI 主题策划**: 根据宣传方向生成候选宣传主题
+- **AI 主题策划**: 根据宣传方向生成候选宣传主题，覆盖外部公众号、内部宣发、招聘宣传、官网公示等场景
 - **AI 初稿撰写**: 根据选定主题生成企业宣传初稿
 - **Human-in-the-loop**: 支持人工选择主题与发布前审稿
 - **传播素材生成**: 自动提取视觉摘要并生成传播素材
@@ -36,6 +36,14 @@ psql -U postgres -c "CREATE DATABASE brandflow_db;"
 
 ### 2. 安装后端依赖
 
+如果使用 Conda，可先进入自己的 Python 环境后：
+
+```bash
+pip install -r requirements.txt
+```
+
+也可以使用普通虚拟环境：
+
 ```bash
 python -m venv venv
 source venv/bin/activate
@@ -63,19 +71,35 @@ JWT_ALGORITHM=HS256
 JWT_EXPIRE_MINUTES=1440
 ```
 
-本项目不内置 Mock LLM / Mock Image 数据。完整体验工作流需要配置 PostgreSQL、`LLM_API_KEY` 和 `IMAGE_API_KEY`。
+本项目不内置 Mock LLM / Mock Image 数据。
 
-如果只是验证登录、宣传任务启动、历史任务和状态恢复，需要 PostgreSQL 与 LLM 配置。缺少 `LLM_API_KEY` 时，AI 主题生成、宣传初稿生成、视觉摘要提取可能失败或返回空结果。缺少 `IMAGE_API_KEY` 时，后端基础服务仍可启动，但传播素材生成不可用，实际调用传播素材生成时会返回清晰错误。
+完整体验工作流需要配置 PostgreSQL、`LLM_API_KEY` 和 `IMAGE_API_KEY`。
 
-### 4. 启动后端服务
+如果只是验证登录、宣传任务启动、历史任务和状态恢复，需要 PostgreSQL 与 LLM 配置。
+
+缺少 `LLM_API_KEY` 时，AI 主题生成、宣传初稿生成、视觉摘要提取可能失败或返回空结果。
+
+缺少 `IMAGE_API_KEY` 时，后端基础服务仍可启动，但传播素材生成不可用，实际调用传播素材生成时会返回清晰错误。
+
+### 4. 检查数据库连接
+
+启动后端前，建议先执行数据库连接测试脚本：
+
+```bash
+python test_db_connection.py
+```
+
+该脚本会读取 `.env` 中的 `POSTGRES_URI`，用于确认 PostgreSQL 是否已启动、数据库名/账号/密码是否正确。连接成功后再启动后端服务。
+
+### 5. 启动后端服务
 
 ```bash
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-API 文档地址: http://localhost:8000/docs
+Fast API 测试地址: http://localhost:8000/docs
 
-### 5. 启动前端
+### 6. 启动前端
 
 ```bash
 cd frontend

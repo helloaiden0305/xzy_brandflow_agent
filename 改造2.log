@@ -208,3 +208,78 @@
   - 底层字段名 topic_direction、generated_topics、selected_topic、article_content、visual_points、image_urls 继续保留，以维持前后端 API、LangGraph State 和历史 checkpoint 兼容。
   - 当前未配置远程仓库，尚未执行 remote 配置或 push。
   - npm install 曾提示前端依赖存在审计漏洞，本阶段未处理，建议后续单独评估。
+
+## 2026-08-16 01:54:23 CST 阶段三复验记录
+
+- 所在分支：feature/xzy-brandflow-demo
+- 修改文件：
+  - 改造2.log
+  - app/**/__pycache__/（复验产生后已清理）
+  - app/**/*.pyc（复验产生后已清理）
+  - frontend/dist/（复验产生后已清理）
+- 修改目的：
+  - 复查阶段三业务语义统一收口是否满足 GitHub 展示、防露馅和本地基础运行要求。
+- 验证方式：
+  - git status 显示当前分支为 feature/xzy-brandflow-demo。
+  - git log 显示最新提交为 chore: unify brandflow business semantics。
+  - 搜索旧业务词与旧项目命名，README、.env.example、app、frontend/src、scripts、test_db_connection.py、frontend/index.html、frontend/package.json 无实际旧业务残留；唯一类似命中为 PII 脱敏正则样例，不是真实密钥。
+  - README 已统一为 XZY BrandFlow Agent / 企业宣传工作流平台，并说明核心流程、真实依赖、项目边界和底层字段兼容原因。
+  - FastAPI 根路径和 /health 返回 XZY BrandFlow Agent。
+  - 注册、登录、/workflow/threads 基础接口验证通过。
+  - 使用 conda project1 环境执行 test_db_connection.py，数据库连接成功。
+  - 使用 Python AST 解析 app 目录和 test_db_connection.py，共 34 个 Python 文件，语法检查通过。
+  - 在 frontend 目录执行 npm run build，Vite 构建成功。
+  - 验收后清理 Python 缓存和 frontend/dist，复查无残留。
+  - git ls-files 检查未跟踪 .env、node_modules、frontend/dist、__pycache__、*.pyc、logs、static/images/generated、本地数据库文件。
+- 验收结论：
+  - 阶段三业务语义统一收口通过，项目展示语义已统一为企业宣传工作流平台，且本地基础运行未被破坏。
+- 遗留问题：
+  - 本次复验追加了改造2.log，需要后续提交。
+  - 当前未配置远程仓库，尚未执行 remote 配置或 push。
+  - 前端依赖审计漏洞本阶段仍未处理，建议后续单独评估。
+
+## 2026-08-16 07:42:21 CST README 启动说明补充
+
+- 所在分支：feature/xzy-brandflow-demo
+- 修改文件：
+  - README.md
+  - 改造2.log
+- 修改目的：
+  - 在快速开始中补充 Conda 环境启动方式，方便本地使用 project1 环境运行。
+  - 在启动后端前补充 `python test_db_connection.py` 数据库连接测试步骤，说明该脚本用于读取 `.env` 中的 `POSTGRES_URI` 并提前验证 PostgreSQL 连接。
+- 验证方式：
+  - 人工检查 README 快速开始章节，确认已包含 Conda 依赖安装方式和数据库连接测试说明。
+- 遗留问题：
+  - 本次仅补充文档，未重新提交 Git。
+
+## 2026-08-16 08:07:21 CST 阶段四：展示文案与场景解释优化
+
+- 所在分支：feature/xzy-brandflow-demo
+- 修改文件：
+  - README.md
+  - frontend/src/App.vue
+  - frontend/src/style.css
+  - app/main.py
+  - app/api/v1/workflow.py
+  - 改造2.log
+  - app/**/__pycache__/（验收后清理）
+  - app/**/*.pyc（验收后清理）
+  - frontend/dist/（验收后清理）
+- 修改目的：
+  - 让 README、前端首页和 FastAPI /docs 的项目定位更直观，明确项目适用于外部公众号、内部宣发平台、内部招聘平台、官网公示等企业宣传场景。
+  - 在 README 中补充活动复盘、技术成果宣传、组织文化宣传、招聘宣传等内容流转场景。
+  - 将前端首页副标题拆成两行，保留原核心表达并补充具体适用场景，避免页面文案过于抽象。
+  - 在 workflow 启动接口说明中补充典型宣传场景，方便 /docs 使用者理解输入宣传方向的业务语义。
+  - 修正 README 中 Conda 安装示例代码块标记。
+  - 保留阶段三复验记录和 README 启动说明补充记录，并纳入本次文档收口提交。
+- 验证方式：
+  - 搜索 PRD 指定旧业务词：AI内容运营助手、AI 内容运营助手、小红书、爆款、电商、教育培训、课程、AI训练师、就业、公众号引流、老师、课件、培训班，README、前端源码、后端展示代码、Prompt、API 描述、脚本中无命中。
+  - 搜索场景词：外部公众号、内部宣发平台、内部招聘平台、官网公示、活动复盘、技术成果宣传、组织文化宣传，确认 README、前端页面和 FastAPI 描述均有覆盖。
+  - 使用 Python AST 解析 app 目录和 test_db_connection.py，共 34 个 Python 文件，语法检查通过。
+  - 在 frontend 目录执行 npm run build，Vite 构建成功。
+  - 启动 uvicorn app.main:app，GET /health 返回 {"status":"healthy","service":"XZY BrandFlow Agent"}。
+  - 验收后清理 Python 缓存和 frontend/dist，复查无残留。
+- 遗留问题：
+  - 本阶段只做展示文案与场景解释优化，未改变登录、历史任务、工作流启动、人工审核、驳回重写、LangGraph 流程或数据库结构。
+  - 当前未配置远程仓库，尚未执行 remote 配置或 push。
+  - 前端依赖审计漏洞本阶段仍未处理，建议后续单独评估。

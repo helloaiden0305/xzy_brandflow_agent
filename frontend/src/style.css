@@ -429,6 +429,11 @@ body {
   font-size: 14px;
 }
 
+.header-subtitle {
+  margin-top: 2px;
+  color: #7a7a7a;
+}
+
 .user-info {
   display: flex;
   align-items: center;
