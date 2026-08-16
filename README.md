@@ -200,13 +200,14 @@ Content-Type: application/json
 
 ## 工作流程
 
-核心流程由 LangGraph 编排，人工选择主题和人工审核都是 interrupt 暂停点，前端通过 thread_id 和 Command resume 从上一次 checkpoint 继续执行。
+核心流程由 LangGraph 编排，人工选择主题和人工审核都是 interrupt 暂停点；用户可以确认候选主题，也可以不满意后重新生成，前端通过 thread_id 和 Command resume 从上一次 checkpoint 继续执行。
 
 ```mermaid
 flowchart TD
     A["用户输入宣传方向"] --> B["AI 生成候选宣传主题<br/>plan_topics"]
     B --> C{"人工选择主题<br/>human_select_topic<br/>interrupt"}
-    C -->|Command resume| D["AI 撰写宣传初稿<br/>write_draft"]
+    C -->|确认主题<br/>Command resume| D["AI 撰写宣传初稿<br/>write_draft"]
+    C -->|不满意，重新生成| B
     D --> E{"人工审核初稿<br/>human_review<br/>interrupt"}
     E -->|审核通过 approve| F["提取视觉摘要<br/>extract_visuals"]
     E -->|驳回并给修改意见 reject| D

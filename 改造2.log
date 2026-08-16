@@ -422,3 +422,21 @@
   - GitHub raw README.md 已确认不包含“## 注意事项”、“底层字段名”、“article_content 会保持接口兼容”、“当前项目是 GitHub Demo 原型”等展示内容。
 - 遗留问题：
   - 本阶段仅调整 README 展示内容，不修改后端接口字段、LangGraph 状态字段或前端业务逻辑。
+
+## 2026-08-16 11:21:33 CST README 工作流程人工选题回路补充
+
+- 当前分支：feature/xzy-brandflow-demo
+- 远程仓库地址：https://github.com/helloaiden0305/xzy_brandflow_agent.git
+- 修改文件：
+  - README.md
+  - 改造2.log
+- 修改目的：
+  - 在 README Mermaid 工作流程图中补充人工选择主题阶段的“重新生成候选主题”回路。
+  - 明确 human_select_topic 是人工介入点，用户既可以确认主题继续写初稿，也可以不满意后回到 plan_topics 重新生成。
+- 验证方式：
+  - 检查 README Mermaid 图已包含“不满意，重新生成”到 plan_topics 的回路。
+  - 执行 Git 追踪文件安全检查，确认未追踪 .env、.DS_Store、node_modules、frontend/dist、logs、static/images/generated、本地数据库或缓存文件。
+- 推送结果：
+  - 待执行 git push origin feature/xzy-brandflow-demo。
+- 遗留问题：
+  - 本次仅修正文档流程表达，不修改真实工作流逻辑。
