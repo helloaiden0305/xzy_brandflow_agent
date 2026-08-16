@@ -200,25 +200,28 @@ Content-Type: application/json
 
 ## 工作流程
 
-```text
-START
-  |
-  v
-plan_topics          AI 生成候选宣传主题
-  |
-  v
-human_select_topic   人工选择宣传主题
-  |
-  v
-write_draft          AI 撰写宣传初稿
-  |
-  v
-human_review         人工审核
-  |
-  +-- approved --> extract_visuals --> generate_images --> END
-  |
-  +-- rejected -----------------------> write_draft
+核心流程由 LangGraph 编排，人工选择主题和人工审核都是 interrupt 暂停点，前端通过 thread_id 和 Command resume 从上一次 checkpoint 继续执行。
+
+```mermaid
+flowchart TD
+    A["用户输入宣传方向"] --> B["AI 生成候选宣传主题<br/>plan_topics"]
+    B --> C{"人工选择主题<br/>human_select_topic<br/>interrupt"}
+    C -->|Command resume| D["AI 撰写宣传初稿<br/>write_draft"]
+    D --> E{"人工审核初稿<br/>human_review<br/>interrupt"}
+    E -->|审核通过 approve| F["提取视觉摘要<br/>extract_visuals"]
+    E -->|驳回并给修改意见 reject| D
+    F --> G["生成传播素材<br/>generate_images"]
+    G --> H{"是否生成图片"}
+    H -->|成功| I["展示最终内容 + 传播素材"]
+    H -->|未开通图片权限| J["展示最终内容 + 权限占位提示 + 视觉摘要"]
+    I --> K["任务完成"]
+    J --> K
+
+    K -. "thread_id + checkpoint" .-> L["PostgreSQL Checkpointer"]
+    L -. "恢复历史任务" .-> D
 ```
+
+图片生成能力需要单独配置图片服务；未开通图片权限时，系统仍会完成内容生成与审核流程，并展示友好的占位提示。
 
 ## 项目结构
 
