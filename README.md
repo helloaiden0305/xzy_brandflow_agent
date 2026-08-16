@@ -240,14 +240,6 @@ frontend/
 └── src/style.css        # 页面样式
 ```
 
-## 注意事项
-
-1. 本地 `.env` 用于开发运行，不应提交到公开仓库。
-2. LangGraph Checkpointer 会自动创建所需表结构。
-3. 生成的传播素材默认保存在 `static/images/generated/`。
-4. 当前项目是 GitHub Demo 原型，不内置 Mock LLM / Mock Image，也不伪造外部服务结果。
-5. 底层字段名如 `topic_direction`、`generated_topics`、`article_content` 会保持接口兼容，对外说明统一解释为宣传方向、候选宣传主题和宣传初稿。
-
 ## License
 
 MIT
