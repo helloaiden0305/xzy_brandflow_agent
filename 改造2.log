@@ -355,3 +355,22 @@
   - 检查 demoPic 目录仅保留 5 张 PNG 截图。
 - 遗留问题：
   - 本阶段不重新生成截图，仅使用已有 demoPic 截图资源。
+
+## 2026-08-16 11:03:37 CST 阶段六点二：上传 GitHub 展示仓库
+
+- 当前分支：feature/xzy-brandflow-demo
+- 远程仓库地址：https://github.com/helloaiden0305/xzy_brandflow_agent.git
+- 推送分支：feature/xzy-brandflow-demo
+- 推送前安全检查结果：
+  - git status --short --branch 显示当前分支为 feature/xzy-brandflow-demo，且无未提交业务代码变更。
+  - origin 已配置为 https://github.com/helloaiden0305/xzy_brandflow_agent.git。
+  - git ls-files 禁传文件检查无命中，未追踪 .env、.DS_Store、node_modules、frontend/dist、logs、static/images/generated、本地数据库或缓存文件。
+  - 旧业务词检查无命中，README、app、frontend/src、.env.example 未发现小红书、电商、课程等旧场景残留。
+  - 疑似密钥检查仅命中 .env.example / README 中的占位符，以及 pii_anonymizer.py 中用于脱敏识别的正则示例，未发现真实 API Key。
+  - README 已包含 Demo 预览章节，demoPic/demo1.png ~ demoPic/demo5.png 已被 Git 追踪。
+- 推送结果：
+  - 待执行 git push -u origin feature/xzy-brandflow-demo。
+- GitHub 页面验收结果：
+  - 待推送完成后验收。
+- 遗留问题：
+  - 是否额外创建 main 分支或调整 GitHub 默认分支，需推送后根据展示需求决定。
