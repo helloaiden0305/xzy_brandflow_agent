@@ -417,6 +417,8 @@
   - 检查 README 已不再出现 `article_content` 字段兼容说明。
   - 执行 Git 追踪文件安全检查，确认未追踪 .env、.DS_Store、node_modules、frontend/dist、logs、static/images/generated、本地数据库或缓存文件。
 - 推送结果：
-  - 待执行 git push origin feature/xzy-brandflow-demo。
+  - 执行 git push origin feature/xzy-brandflow-demo 成功。
+  - GitHub 远程分支 refs/heads/feature/xzy-brandflow-demo 指向 ec42d337d876091442f8c8913c8cc1fe064f6fb1。
+  - GitHub raw README.md 已确认不包含“## 注意事项”、“底层字段名”、“article_content 会保持接口兼容”、“当前项目是 GitHub Demo 原型”等展示内容。
 - 遗留问题：
   - 本阶段仅调整 README 展示内容，不修改后端接口字段、LangGraph 状态字段或前端业务逻辑。
