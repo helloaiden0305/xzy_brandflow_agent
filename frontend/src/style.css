@@ -56,6 +56,11 @@ body {
   cursor: not-allowed;
 }
 
+.start-btn {
+  min-width: 96px;
+  white-space: nowrap;
+}
+
 .btn-success {
   background: #52c41a;
   color: #fff;

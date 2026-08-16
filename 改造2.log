@@ -283,3 +283,22 @@
   - 本阶段只做展示文案与场景解释优化，未改变登录、历史任务、工作流启动、人工审核、驳回重写、LangGraph 流程或数据库结构。
   - 当前未配置远程仓库，尚未执行 remote 配置或 push。
   - 前端依赖审计漏洞本阶段仍未处理，建议后续单独评估。
+
+## 2026-08-16 08:11:03 CST 阶段四点一：启动按钮换行问题修复
+
+- 所在分支：feature/xzy-brandflow-demo
+- 修改文件：
+  - frontend/src/App.vue
+  - frontend/src/style.css
+  - 改造2.log
+  - frontend/dist/（验收后清理）
+- 修改目的：
+  - 为“开始策划”按钮增加专用 start-btn class。
+  - 通过 CSS 设置 white-space: nowrap 和 min-width，确保按钮文字在窄屏和本地演示中保持单行显示。
+  - 不修改 handleStart、startWorkflow、API 请求参数或 LangGraph 流程。
+- 验证方式：
+  - 在 frontend 目录执行 npm run build，Vite 构建成功。
+  - 验收后清理 frontend/dist，避免构建产物进入 Git。
+- 遗留问题：
+  - 本阶段仅修复按钮换行展示细节，未做截图自动化验收。
+  - 当前未配置远程仓库，尚未执行 remote 配置或 push。

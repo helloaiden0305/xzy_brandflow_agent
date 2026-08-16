@@ -187,7 +187,7 @@
           @keyup.enter="handleStart"
         />
         <button 
-          class="btn btn-primary" 
+          class="btn btn-primary start-btn"
           :disabled="!topicDirection.trim() || loading"
           @click="handleStart"
         >
