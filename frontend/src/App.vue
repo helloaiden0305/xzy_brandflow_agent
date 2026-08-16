@@ -319,6 +319,18 @@
         </div>
       </div>
 
+      <div v-else-if="showImagePlaceholder" class="card">
+        <div class="card-title">传播素材</div>
+        <div class="image-placeholder">
+          <div class="image-placeholder-title">
+            您当前未申请图片生成权限，请联系 AI 部门负责人员开通后重试。
+          </div>
+          <div class="image-placeholder-desc">
+            当前工作流已完成内容生成与人工审核，传播素材生成能力需要单独配置图片生成服务。
+          </div>
+        </div>
+      </div>
+
       <div v-if="visualPoints.length > 0" class="card">
         <div class="card-title">视觉摘要</div>
         <ul style="padding-left: 20px;">
@@ -701,6 +713,10 @@ const totalDuration = computed(() => {
 // 计算属性 - 总Token
 const totalTokens = computed(() => {
   return nodeMetrics.value.reduce((sum, m) => sum + (m.total_tokens || 0), 0)
+})
+
+const showImagePlaceholder = computed(() => {
+  return currentStep.value === 4 && imageUrls.value.length === 0
 })
 
 // 格式化耗时

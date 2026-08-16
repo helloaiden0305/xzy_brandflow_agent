@@ -302,3 +302,56 @@
 - 遗留问题：
   - 本阶段仅修复按钮换行展示细节，未做截图自动化验收。
   - 当前未配置远程仓库，尚未执行 remote 配置或 push。
+
+## 2026-08-16 08:12:09 CST 阶段四复验记录
+
+- 复验结论：阶段四与阶段四点一符合预期。
+- 复验内容：
+  - README、FastAPI 描述、workflow API 描述、前端首页均已补充外部公众号、内部宣发平台、内部招聘平台、官网公示等企业宣传场景。
+  - 前端“开始策划”按钮已增加 start-btn class，并通过 white-space: nowrap 避免文字换行。
+  - 搜索旧业务词：AI内容运营助手、AI 内容运营助手、小红书、爆款、电商、教育培训、课程、AI训练师、就业、公众号引流、老师、课件、培训班、graph_xiaohongshu、xiaohongshu，展示相关文件无命中。
+  - 执行 npm run build，前端构建通过。
+  - 临时启动 uvicorn app.main:app，GET /health 返回 {"status":"healthy","service":"XZY BrandFlow Agent"}，GET / 返回 200。
+  - 验收后清理 frontend/dist、Python __pycache__ 和 pyc 文件。
+- 注意事项：
+  - frontend/src/App.vue 与 frontend/src/style.css 当前仍有未提交的阶段四点一修改，需要后续提交到 feature/xzy-brandflow-demo 分支。
+
+## 2026-08-16 09:30:31 CST 阶段五点一：传播素材未生成时的展示占位优化
+
+- 所在分支：feature/xzy-brandflow-demo
+- 修改文件：
+  - frontend/src/App.vue
+  - frontend/src/style.css
+  - 改造2.log
+- 修改目的：
+  - 当工作流已完成但 image_urls 为空时，仍展示“传播素材”区域。
+  - 使用灰色中性占位提示说明当前未申请图片生成权限或图片生成服务需单独配置。
+  - 保留视觉摘要展示，不新增 Mock 图片，不伪造 image_urls，不修改真实图片生成逻辑。
+- 验证方式：
+  - 在 frontend 目录执行 npm run build，Vite 构建成功。
+  - 验证后清理 frontend/dist，避免构建产物进入 Git。
+- 遗留问题：
+  - 当前图片生成服务仍未切换到方舟 Seedream images.generate 调用方式，本阶段仅优化空图片结果的页面展示。
+
+## 2026-08-16 09:52:16 CST 阶段六点一：README Demo 截图展示优化
+
+- 所在分支：feature/xzy-brandflow-demo
+- 修改文件：
+  - README.md
+  - demoPic/demo1.png
+  - demoPic/demo2.png
+  - demoPic/demo3.png
+  - demoPic/demo4.png
+  - demoPic/demo5.png
+  - 改造2.log
+- 修改目的：
+  - 在 README 项目简介之后、功能特性之前新增 Demo 预览章节。
+  - 使用 GitHub 可识别的相对路径引用 demoPic 下 5 张本地运行截图。
+  - 为每张截图增加简短企业宣传工作流语义标题，方便访问者快速理解展示流程。
+  - 删除 demoPic/.DS_Store，只保留可发布的 Demo 截图资源。
+- 验证方式：
+  - 人工查看 demo1.png ~ demo5.png，未发现密钥、账号密码或旧业务场景痕迹。
+  - 检查 README 图片引用均为 demoPic/demo1.png ~ demoPic/demo5.png 相对路径。
+  - 检查 demoPic 目录仅保留 5 张 PNG 截图。
+- 遗留问题：
+  - 本阶段不重新生成截图，仅使用已有 demoPic 截图资源。
